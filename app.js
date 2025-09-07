@@ -292,7 +292,7 @@ class EcoFlowAPI {
             isGenerating: currentGeneration > 1,
             isConsuming: currentLoad > 0,
             unit: "W",
-            summaryMessage: `⚡ ${currentGeneration/10} W, 🔌: ${currentLoad/10} W `
+            summaryMessage: `⚡ ${currentGeneration/10} W\n🔌: ${currentLoad/10} W `
             }
         };
     }
