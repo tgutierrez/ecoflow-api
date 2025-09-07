@@ -267,31 +267,32 @@ class EcoFlowAPI {
         return {
             timestamp: new Date().toISOString(),
             generation: {
-                current: currentGeneration,
-                unit: "W"
+            current: currentGeneration,
+            unit: "W"
             },
             consumption: {
-                reportedByInverter: currentLoadReportedByInverter,
-                permanentWatt: permanentWatt,
-                smartPlugs: plugTotalConsumption,
-                total: currentLoad,
-                unit: "W"
+            reportedByInverter: currentLoadReportedByInverter,
+            permanentWatt: permanentWatt,
+            smartPlugs: plugTotalConsumption,
+            total: currentLoad,
+            unit: "W"
             },
             inverter: {
-                outputLimit: currentOutputLimit,
-                serialNumber: inverter,
-                unit: "W"
+            outputLimit: currentOutputLimit,
+            serialNumber: inverter,
+            unit: "W"
             },
             smartPlugs: smartPlugs.map((sn, index) => ({
-                serialNumber: sn,
-                consumption: plugConsumption[index] || 0,
-                unit: "W"
+            serialNumber: sn,
+            consumption: plugConsumption[index] || 0,
+            unit: "W"
             })),
             summary: {
-                netLoad: netLoad,
-                isGenerating: currentGeneration > 0,
-                isConsuming: currentLoad > 0,
-                unit: "W"
+            netLoad: netLoad,
+            isGenerating: currentGeneration > 1,
+            isConsuming: currentLoad > 0,
+            unit: "W",
+            summaryMessage: `⚡ ${currentGeneration/10} W, 🔌: ${currentLoad/10} W `
             }
         };
     }
