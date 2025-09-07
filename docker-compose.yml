@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  ecoflow-api:
+    build: .
+    container_name: ecoflow-home-automation
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    env_file:
+      - .env
+    networks:
+      - ecoflow-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ecoflow.rule=Host(`ecoflow.local`)"
+      - "traefik.http.routers.ecoflow.entrypoints=web"
+      - "traefik.http.services.ecoflow.loadbalancer.server.port=3000"
+    volumes:
+      # Optional: Mount logs directory if you want persistent logs
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+
+networks:
+  ecoflow-network:
+    driver: bridge
+
+# Optional: If you want to add monitoring or other services
+# volumes:
+#   ecoflow-logs:
+#     driver: local
