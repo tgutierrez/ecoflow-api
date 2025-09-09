@@ -103,7 +103,8 @@ class EcoFlowAPI {
                 try {
                     const params = {}; // Empty params for device list
                     const headers = this.getAuthHeaders(params);
-
+                    // remove content-type for GET
+                    delete headers['Content-Type'];
                     const response = await axios.get(this.baseURL + uri, { headers, params });
                     return response.data;
                 } catch (error) {
@@ -119,6 +120,45 @@ class EcoFlowAPI {
         }
     }
 
+    async getDeviceAllQuotas(sn) {
+        try {
+            const uri = '/sign/device/quota/all';
+            const params = {
+                sn: sn
+            };
+            const headers = this.getAuthHeaders(params);
+            delete headers['Content-Type'];
+            const response = await axios.get(this.baseURL + uri, { headers, params });
+
+            return response.data;
+        } catch (error) {
+            console.error(`Error fetching device quota ${sn}:`, error.message);
+            throw error;
+        }
+
+    }
+
+    async getDeviceQuotas(sn, quotas) {
+        try {
+            const uri = '/sign/device/quota';
+            const params = {
+                sn: sn,
+                params: {
+                    quotas: quotas
+                }
+            };
+            const headers = this.getAuthHeaders(params);
+            const response = await axios.post(this.baseURL + uri, params, { headers });
+
+            return response.data;
+        } catch (error) {
+            console.error(`Error fetching device quota ${sn}:`, error.message);
+            throw error;
+        }
+
+    }
+
+
     // Get device details by ID (example with parameters)
     async getDeviceQuotaForInverter(sn) {
         try {
@@ -133,7 +173,8 @@ class EcoFlowAPI {
                         "20_1.geneWatt",
                         "20_1.permanentWatts",
                         "20_1.floadLimitOut",
-                        "20_1.consWatt"
+                        "20_1.consWatt",
+                        "20_1.pvToInvWatts"
                     ]
                 }
             }
@@ -244,6 +285,7 @@ class EcoFlowAPI {
         const inverterConsumption = await this.getDeviceQuotaForInverter(inverter);
 
         const currentGeneration = inverterConsumption.data["20_1.geneWatt"] || 0;
+        const solarToPV = inverterConsumption.data["20_1.pvToInvWatts"] || 0;
         const currentLoadReportedByInverter = inverterConsumption.data["20_1.consWatt"] || 0;
         const currentOutputLimit = inverterConsumption.data["20_1.floadLimitOut"] || 0;
         const permanentWatt = inverterConsumption.data["20_1.permanentWatts"] || 0;
@@ -292,7 +334,7 @@ class EcoFlowAPI {
             isGenerating: currentGeneration > 1,
             isConsuming: currentLoad > 0,
             unit: "W",
-            summaryMessage: `⚡ ${currentGeneration/10} W\n🔌: ${currentLoad/10} W `
+            summaryMessage: `☀️: ${(solarToPV/10).toFixed(1).padEnd(5)} W\n⚡: ${(currentGeneration/10).toFixed(1).padEnd(5)} W\n🔌: ${(currentLoad/10).toFixed(1).padEnd(5)} W`
             }
         };
     }

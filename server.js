@@ -81,21 +81,18 @@ app.get('/devices', async (req, res) => {
     }
 });
 
+
 // Get specific device quota
-app.get('/devices/:sn/quota', async (req, res) => {
+app.get('/devices/:sn/quotas', async (req, res) => {
     try {
         const { sn } = req.params;
-        const { type = 'inverter' } = req.query;
-        
+        const { values = '' } = req.query;
+        const quotaArray = values ? values.split(',').map(q => q.trim()) : [];
+
         const ecoflow = new EcoFlowAPI();
-        let deviceData;
-        
-        if (type === 'plug') {
-            deviceData = await ecoflow.getDeviceQuotaFromPlugInWatts(sn);
-        } else {
-            deviceData = await ecoflow.getDeviceQuotaForInverter(sn);
-        }
-        
+
+        let deviceData = quotaArray.length > 0 ? await ecoflow.getDeviceQuotas(sn, quotaArray) : await ecoflow.getDeviceAllQuotas(sn);
+
         res.json({
             success: true,
             data: deviceData
