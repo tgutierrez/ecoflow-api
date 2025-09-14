@@ -3,3 +3,8 @@ build
 npm-debug.log
 .env
 .DS_Store
+
+# StreamDeck plugin build files (keep .env.example)
+streamdeck-plugin/com.tomas-g.eco-power-deck.sdPlugin/bin/*.js
+streamdeck-plugin/com.tomas-g.eco-power-deck.sdPlugin/bin/actions/
+streamdeck-plugin/com.tomas-g.eco-power-deck.sdPlugin/bin/api/

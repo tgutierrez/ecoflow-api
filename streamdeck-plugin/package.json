@@ -6,7 +6,10 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "rollup": "rollup -c"
+    "rollup": "rollup -c",
+    "validate": "node validate-plugin.js",
+    "test": "node test-integration.js",
+    "package": "npm run build && npm run validate"
   },
   "keywords": ["streamdeck", "ecoflow", "power", "monitoring"],
   "author": "Tomas G",

@@ -94,10 +94,29 @@ npm start
 ## 🏠 Home Automation Integration
 
 Perfect for integration with:
+- **StreamDeck**: Dedicated plugin for real-time power monitoring buttons
 - **Home Assistant**: RESTful sensors
 - **OpenHAB**: HTTP binding
 - **Node-RED**: HTTP request nodes
 - **Custom dashboards**: Direct API calls
+
+### StreamDeck Plugin
+A dedicated StreamDeck plugin is included in the `streamdeck-plugin/` directory:
+
+```bash
+cd streamdeck-plugin
+npm install
+npm run build
+# Install the generated .sdPlugin folder in StreamDeck software
+```
+
+Features:
+- Real-time power data on StreamDeck buttons
+- Configurable polling intervals
+- Visual states for generation vs consumption
+- Error handling and connection status
+
+See `streamdeck-plugin/README.md` for detailed setup instructions.
 
 ### Example Home Assistant Configuration
 ```yaml
