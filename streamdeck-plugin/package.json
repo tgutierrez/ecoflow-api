@@ -1,0 +1,27 @@
+{
+  "name": "eco-power-deck",
+  "version": "1.0.0",
+  "description": "EcoFlow power monitoring for Stream Deck",
+  "main": "bin/plugin.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "rollup": "rollup -c"
+  },
+  "keywords": ["streamdeck", "ecoflow", "power", "monitoring"],
+  "author": "Tomas G",
+  "license": "ISC",
+  "dependencies": {
+    "@elgato/streamdeck": "^0.3.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "rollup": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

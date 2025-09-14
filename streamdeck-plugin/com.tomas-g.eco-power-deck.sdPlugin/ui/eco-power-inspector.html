@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>EcoFlow Power Settings</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 10px;
+            background-color: #2d2d30;
+            color: #cccccc;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label {
+            font-size: 12px;
+            color: #cccccc;
+        }
+        input {
+            padding: 6px;
+            border: 1px solid #464647;
+            border-radius: 3px;
+            background-color: #464647;
+            color: #cccccc;
+            font-size: 12px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007ACC;
+        }
+        .help-text {
+            font-size: 10px;
+            color: #999999;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="setting-group">
+            <label for="apiBaseUrl">API Server URL:</label>
+            <input type="text" id="apiBaseUrl" placeholder="http://localhost:3000">
+            <div class="help-text">URL of your EcoFlow API server</div>
+        </div>
+        
+        <div class="setting-group">
+            <label for="pollInterval">Poll Interval (seconds):</label>
+            <input type="number" id="pollInterval" placeholder="30" min="5" max="300">
+            <div class="help-text">How often to update power data (5-300 seconds)</div>
+        </div>
+    </div>
+
+    <script>
+        // Connect to Stream Deck
+        const websocket = new WebSocket('ws://localhost:23654');
+        let actionUUID;
+        let actionContext;
+
+        websocket.onopen = function() {
+            console.log('Connected to Stream Deck');
+        };
+
+        websocket.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            
+            if (message.event === 'didReceiveSettings') {
+                const settings = message.payload.settings;
+                
+                // Update UI with current settings
+                document.getElementById('apiBaseUrl').value = settings.apiBaseUrl || 'http://localhost:3000';
+                document.getElementById('pollInterval').value = settings.pollInterval || 30;
+            }
+        };
+
+        // Handle input changes
+        function updateSettings() {
+            const settings = {
+                apiBaseUrl: document.getElementById('apiBaseUrl').value || 'http://localhost:3000',
+                pollInterval: parseInt(document.getElementById('pollInterval').value) * 1000 || 30000
+            };
+
+            const message = {
+                event: 'setSettings',
+                context: actionContext,
+                payload: settings
+            };
+
+            websocket.send(JSON.stringify(message));
+        }
+
+        // Add event listeners
+        document.getElementById('apiBaseUrl').addEventListener('input', updateSettings);
+        document.getElementById('pollInterval').addEventListener('input', updateSettings);
+
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            // Request current settings
+            if (actionContext) {
+                const message = {
+                    event: 'getSettings',
+                    context: actionContext
+                };
+                websocket.send(JSON.stringify(message));
+            }
+        });
+    </script>
+</body>
+</html>
